@@ -24,24 +24,15 @@ y_data_color = "#7cb342"  # green
 z_data_color = "#0288d1"  # blue
 background_color = "#fafafa"  # white (material)
 
-device1_acc_df = pd.DataFrame({'time': [], 'x': [], 'y': [], 'z': []})
-device1_gyro_df = pd.DataFrame({'time': [], 'x': [], 'y': [], 'z': []})
-
-device2_acc_df = pd.DataFrame({'time': [], 'x': [], 'y': [], 'z': []})
-device2_gyro_df = pd.DataFrame({'time': [], 'x': [], 'y': [], 'z': []})
-
-device3_acc_df = pd.DataFrame({'time': [], 'x': [], 'y': [], 'z': []})
-device3_gyro_df = pd.DataFrame({'time': [], 'x': [], 'y': [], 'z': []})
 
 class Sensor:
-    def __init__(self, address, sensor_type, x_data, y_data, z_data, time_data, df):
+    def __init__(self, address, sensor_type, x_data, y_data, z_data, time_data):
         self.address = address
         self.sensor_type = sensor_type
         self.x_data = x_data
         self.y_data = y_data
         self.z_data = z_data
         self.time_data = time_data
-        self.df = df
 
     def on_message(self, ws, message):
         values = json.loads(message)['values']
@@ -52,9 +43,6 @@ class Sensor:
         self.z_data.append(values[2])
         current_timestamp = time.time()
         self.time_data.append(current_timestamp)
-        
-        new_row = pd.DataFrame({'time': [current_timestamp], 'x': [values[0]], 'y': [values[1]], 'z': [values[2]]})
-        self.df = pd.concat([self.df, new_row], ignore_index=True)
 
     def on_error(self, ws, error):
         print("error occurred")
@@ -84,37 +72,91 @@ class Sensor:
         thread.start()
 
 def clear_data():
-    device1_acc_df.drop(device1_acc_df.index, inplace=True)
-    device1_gyro_df.drop(device1_gyro_df.index, inplace=True)
-    device2_acc_df.drop(device2_acc_df.index, inplace=True)
-    device2_gyro_df.drop(device2_gyro_df.index, inplace=True)
-    device3_acc_df.drop(device3_acc_df.index, inplace=True)
-    device3_gyro_df.drop(device3_gyro_df.index, inplace=True)
+    device1["acc_x"].clear()
+    device1["acc_y"].clear()
+    device1["acc_z"].clear()
+    device1["acc_time"].clear()
+    device1["gyro_x"].clear()
+    device1["gyro_y"].clear()
+    device1["gyro_z"].clear()
+    device1["gyro_time"].clear()
     
+    device2["acc_x"].clear()
+    device2["acc_y"].clear()
+    device2["acc_z"].clear()
+    device2["acc_time"].clear()
+    device2["gyro_x"].clear()
+    device2["gyro_y"].clear()
+    device2["gyro_z"].clear()
+    device2["gyro_time"].clear()
     
+    device3["acc_x"].clear()
+    device3["acc_y"].clear()
+    device3["acc_z"].clear()
+    device3["acc_time"].clear()
+    device3["gyro_x"].clear()
+    device3["gyro_y"].clear()
+    device3["gyro_z"].clear()
+    device3["gyro_time"].clear()
+
+
 def convert_to_csv():
     global ACTION, SUBJECT_ID
     print("\nStopping data capture...")
-    device1_acc_df.assign(action= [ACTION]*len(device1_acc_df))
-    device1_acc_df.assign(subject_id= [SUBJECT_ID]*len(device1_acc_df))
-    device1_gyro_df.assign(action= [ACTION]*len(device1_gyro_df))
-    device1_gyro_df.assign(subject_id= [SUBJECT_ID]*len(device1_gyro_df))
-    device1_acc_df.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_accelerometer_data.csv", index=False)
-    device1_gyro_df.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_gyroscope_data.csv", index=False)
+    df_device1_acc = pd.DataFrame({'action' : [ACTION]*len(device1["acc_time"]),
+                            'subject_id': [SUBJECT_ID]*len(device1["acc_time"]),
+                           'time': device1["acc_time"],
+                            'acc_x': device1["acc_x"],
+                            'acc_y': device1["acc_y"],
+                            'acc_z': device1["acc_z"]})
     
-    device2_acc_df.assign(action= [ACTION]*len(device2_acc_df))
-    device2_acc_df.assign(subject_id= [SUBJECT_ID]*len(device2_acc_df))
-    device2_gyro_df.assign(action= [ACTION]*len(device2_gyro_df))
-    device2_gyro_df.assign(subject_id= [SUBJECT_ID]*len(device2_gyro_df))
-    device2_acc_df.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_accelerometer_data.csv", index=False)
-    device2_gyro_df.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_gyroscope_data.csv", index=False)
+    df_device1_gyro = pd.DataFrame({'action' : [ACTION]*len(device1["gyro_time"]),
+                            'subject_id': [SUBJECT_ID]*len(device1["gyro_time"]),
+                           'time': device1["gyro_time"],
+                            'gyro_x': device1["gyro_x"],
+                            'gyro_y': device1["gyro_y"],
+                            'gyro_z': device1["gyro_z"]})
     
-    device3_acc_df.assign(action= [ACTION]*len(device3_acc_df))
-    device3_acc_df.assign(subject_id= [SUBJECT_ID]*len(device3_acc_df))
-    device3_gyro_df.assign(action= [ACTION]*len(device3_gyro_df))
-    device3_gyro_df.assign(subject_id= [SUBJECT_ID]*len(device3_gyro_df))
-    device3_acc_df.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_accelerometer_data.csv", index=False)
-    device3_gyro_df.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_gyroscope_data.csv", index=False)
+    df_device2_acc = pd.DataFrame({'action' : [ACTION]*len(device2["acc_time"]),
+                            'subject_id': [SUBJECT_ID]*len(device2["acc_time"]),
+                           'time': device2["acc_time"],
+                            'acc_x': device2["acc_x"],
+                            'acc_y': device2["acc_y"],
+                            'acc_z': device2["acc_z"]})
+    
+    df_device2_gyro = pd.DataFrame({'action' : [ACTION]*len(device2["gyro_time"]),
+                            'subject_id': [SUBJECT_ID]*len(device2["gyro_time"]),
+                           'time': device2["gyro_time"],
+                            'gyro_x': device2["gyro_x"],
+                            'gyro_y': device2["gyro_y"],
+                            'gyro_z': device2["gyro_z"]})
+    
+    df_device3_acc = pd.DataFrame({'action' : [ACTION]*len(device3["acc_time"]),
+                            'subject_id': [SUBJECT_ID]*len(device3["acc_time"]),
+                           'time': device3["acc_time"],
+                            'acc_x': device3["acc_x"],
+                            'acc_y': device3["acc_y"],
+                            'acc_z': device3["acc_z"]})
+    
+    df_device3_gyro = pd.DataFrame({'action' : [ACTION]*len(device3["gyro_time"]),
+                            'subject_id': [SUBJECT_ID]*len(device3["gyro_time"]),
+                           'time': device3["gyro_time"],
+                            'gyro_x': device3["gyro_x"],
+                            'gyro_y': device3["gyro_y"],
+                            'gyro_z': device3["gyro_z"]})
+    
+    
+    
+    df_device1_acc.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_accelerometer_data.csv", index=False)
+    df_device1_gyro.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_gyroscope_data.csv", index=False)
+    
+   
+    df_device2_acc.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_accelerometer_data.csv", index=False)
+    df_device2_gyro.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_gyroscope_data.csv", index=False)
+    
+    
+    df_device3_acc.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_accelerometer_data.csv", index=False)
+    df_device3_gyro.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_gyroscope_data.csv", index=False)
     
     print("Data saved to CSV files")
     ACTION = None
@@ -262,7 +304,6 @@ if __name__ == "__main__":
         device1["acc_y"],
         device1["acc_z"],
         device1["acc_time"],
-        device1_acc_df,
     )
     device1_gyroscope_sensor = Sensor(
         "10.10.23.88:8080",
@@ -271,26 +312,23 @@ if __name__ == "__main__":
         device1["gyro_y"],
         device1["gyro_z"],
         device1["gyro_time"],
-        device1_gyro_df,
     )
     
     device2_accelerometer_sensor = Sensor(
-        "10.10.23.88:8080",
+        "10.10.50.56:8080",
         "android.sensor.accelerometer",
         device2["acc_x"],
         device2["acc_y"],
         device2["acc_z"],
         device2["acc_time"],
-        device2_acc_df,
     )
     device2_gyroscope_sensor = Sensor(
-        "10.10.23.88:8080",
+        "10.10.50.56:8080",
         "android.sensor.gyroscope",
         device2["gyro_x"],
         device2["gyro_y"],
         device2["gyro_z"],
         device2["gyro_time"],
-        device2_gyro_df,
     )
     
     device3_accelerometer_sensor = Sensor(
@@ -300,7 +338,6 @@ if __name__ == "__main__":
         device3["acc_y"],
         device3["acc_z"],
         device3["acc_time"],
-        device3_acc_df,
     )
     device3_gyroscope_sensor = Sensor(
         "10.10.23.88:8080",
@@ -309,7 +346,6 @@ if __name__ == "__main__":
         device3["gyro_y"],
         device3["gyro_z"],
         device3["gyro_time"],
-        device3_gyro_df,
     )
 
     device1_accelerometer_sensor.connect()
