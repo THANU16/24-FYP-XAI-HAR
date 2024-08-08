@@ -199,7 +199,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     accelerometer_sensor = Sensor(
-        "10.136.103.158:8080",
+        "10.10.16.27:8080",
         "android.sensor.accelerometer",
         acc_x_data,
         acc_y_data,
@@ -207,8 +207,8 @@ if __name__ == "__main__":
         acc_time_data,
     )
     gyroscope_sensor = Sensor(
-        "10.136.103.158:8080",
-        "android.sensor.gyroscope",
+        "10.10.16.27:8080",
+        "android.sensor.magnetic_field",
         gyro_x_data,
         gyro_y_data,
         gyro_z_data,
