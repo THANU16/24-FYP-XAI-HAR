@@ -83,6 +83,7 @@ def clear_data():
     device1["mag_x"].clear()
     device1["mag_y"].clear()
     device1["mag_z"].clear()
+    device1["mag_time"].clear()
     
     device2["acc_x"].clear()
     device2["acc_y"].clear()
