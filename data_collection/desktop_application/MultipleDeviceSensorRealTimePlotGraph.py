@@ -2,10 +2,10 @@
 Python code to show real-time plot from live accelerometer's
 data received via SensorServer app over websocket
 """
-
-from PyQt5 import QtWidgets, QtCore, QtGui
+import sys
+import os
+from PyQt5 import QtWidgets, QtCore
 import pyqtgraph as pg
-import sys  # We need sys so that we can pass argv to QApplication
 import websocket
 import json
 import threading
@@ -178,20 +178,28 @@ def convert_to_csv():
                             'mag_y': device3["mag_y"],
                             'mag_z': device3["mag_z"]})
     
+    if not os.path.exists("data"):
+        os.makedirs("data") # create a folder to store the data
+    if not os.path.exists("data/"+str(SUBJECT_ID)):
+        os.makedirs("data/"+str(SUBJECT_ID)) # create a folder to store the data for each subject
+    if not os.path.exists("data/"+str(SUBJECT_ID)+"/"+ACTION):
+        os.makedirs("data/"+str(SUBJECT_ID)+"/"+ACTION) # create a folder to store the data for each action inside the subject folder
+        
+    store_base_path = "data/"+str(SUBJECT_ID)+"/"+ACTION+"/"
     
-    df_device1_acc.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_accelerometer_data.csv", index=False)
-    df_device1_gyro.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_gyroscope_data.csv", index=False)
-    df_device1_mag.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_magnetic_data.csv", index=False)
+    df_device1_acc.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_accelerometer_data.csv"), index=False)
+    df_device1_gyro.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_gyroscope_data.csv"), index=False)
+    df_device1_mag.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device1_magnetic_data.csv"), index=False)
     
    
-    df_device2_acc.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_accelerometer_data.csv", index=False)
-    df_device2_gyro.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_gyroscope_data.csv", index=False)
-    df_device2_mag.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_magnetic_data.csv", index=False)
+    df_device2_acc.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_accelerometer_data.csv"), index=False)
+    df_device2_gyro.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_gyroscope_data.csv"), index=False)
+    df_device2_mag.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device2_magnetic_data.csv"), index=False)
     
     
-    df_device3_acc.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_accelerometer_data.csv", index=False)
-    df_device3_gyro.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_gyroscope_data.csv", index=False)
-    df_device3_mag.to_csv(ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_magnetic_data.csv", index=False)
+    df_device3_acc.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_accelerometer_data.csv"), index=False)
+    df_device3_gyro.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_gyroscope_data.csv"), index=False)
+    df_device3_mag.to_csv(os.path.join(store_base_path, ACTION+"_subject_"+str(SUBJECT_ID)+"_device3_magnetic_data.csv"), index=False)
     
     print("Data saved to CSV files")
     ACTION = None
@@ -371,8 +379,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
+    device1_ip = "192.168.1.2:8080"
+    device2_ip = "10.10.50.56:8080"
+    device3_ip = "10.10.50.56:8080"
     device1_accelerometer_sensor = Sensor(
-        "10.10.16.27:8080",
+        device1_ip,
         "android.sensor.accelerometer",
         device1["acc_x"],
         device1["acc_y"],
@@ -380,7 +391,7 @@ if __name__ == "__main__":
         device1["acc_time"],
     )
     device1_gyroscope_sensor = Sensor(
-        "10.10.16.27:8080",
+        device1_ip,
         "android.sensor.gyroscope",
         device1["gyro_x"],
         device1["gyro_y"],
@@ -388,7 +399,7 @@ if __name__ == "__main__":
         device1["gyro_time"],
     )
     device1_magnetic_sensor = Sensor(
-        "10.10.16.27:8080",
+        device1_ip,
         "android.sensor.magnetic_field",
         device1["mag_x"],
         device1["mag_y"],
@@ -397,7 +408,7 @@ if __name__ == "__main__":
     )
     
     device2_accelerometer_sensor = Sensor(
-        "10.10.50.56:8080",
+        device2_ip,
         "android.sensor.accelerometer",
         device2["acc_x"],
         device2["acc_y"],
@@ -405,7 +416,7 @@ if __name__ == "__main__":
         device2["acc_time"],
     )
     device2_gyroscope_sensor = Sensor(
-        "10.10.50.56:8080",
+        device2_ip,
         "android.sensor.gyroscope",
         device2["gyro_x"],
         device2["gyro_y"],
@@ -413,7 +424,7 @@ if __name__ == "__main__":
         device2["gyro_time"],
     )
     device2_magnetic_sensor = Sensor(
-        "10.10.50.56:8080",
+        device2_ip,
         "android.sensor.magnetic_field",
         device2["mag_x"],
         device2["mag_y"],
@@ -422,7 +433,7 @@ if __name__ == "__main__":
     )
     
     device3_accelerometer_sensor = Sensor(
-        "10.10.23.58:8080",
+        device3_ip,
         "android.sensor.accelerometer",
         device3["acc_x"],
         device3["acc_y"],
@@ -430,7 +441,7 @@ if __name__ == "__main__":
         device3["acc_time"],
     )
     device3_gyroscope_sensor = Sensor(
-        "10.10.23.58:8080",
+        device3_ip,
         "android.sensor.gyroscope",
         device3["gyro_x"],
         device3["gyro_y"],
@@ -438,7 +449,7 @@ if __name__ == "__main__":
         device3["gyro_time"],
     )
     device3_magnetic_sensor = Sensor(
-        "10.10.23.58:8080",
+        device3_ip,
         "android.sensor.magnetic_field",
         device3["mag_x"],
         device3["mag_y"],
