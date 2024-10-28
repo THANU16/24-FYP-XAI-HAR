@@ -10,3 +10,4 @@ notebooks = api.kernels_list(mine=True)
 # Print the notebook path and title
 for notebook in notebooks:
     print(f"Title: {notebook.title}, Path: {notebook.ref}")
+    

@@ -1,21 +1,16 @@
 {
-    "id": "thanushanth/using-ku-har-npair-and-softmax-classifier",
-    "title": "Using ku-har - NPair and softmax classifier",
-    "code_file": "using-ku-har-npair-and-softmax-classifier.ipynb",
+    "id": "thanushanth/tigger-using-ku-har-npair-and-softmax-classifier",
+    "title": "Tigger Using ku-har - NPair and softmax classifier",
+    "code_file": "tigger-using-ku-har-npair-and-softmax-classifier.ipynb",
     "language": "python",
     "kernel_type": "notebook",
-    "is_private": false,
+    "is_private": true,
+    "enable_gpu": true,
+    "enable_internet": true,
     "tags": [
         "Machine Learning",
         "Deep Learning",
         "Kaggle"
     ],
-    "datasets": [
-        {
-            "path": "/kaggle/input/3.Time_domain_subsamples/KU-HAR_time_domain_subsamples_20750x300.csv",
-            "description": "Time domain subsamples dataset for human activity recognition."
-        }
-    ]
+    "datasets": []
 }
-
-
